@@ -1,6 +1,7 @@
 *
 !.gitignore
-!/src_matlab/**
-!*.m
+!/src_matlab/
+!/src_matlab/*
+!/src_matlab/*/*.m
 
 !README.md
