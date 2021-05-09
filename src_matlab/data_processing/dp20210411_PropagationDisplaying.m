@@ -7,9 +7,9 @@ freq_samp = 32e3;
 N = 512;
 
 % output vedio
-IF_Output_Vedio = true;
+IF_Output_Vedio = false;
 
-% filename pr
+% filename prefix
 dataname_arr = [ ...
     "angle123data0", ...
     "angle168data0", ...
@@ -51,7 +51,7 @@ for i = 1 : datanum
     phase_error_estimated = phase_difference_estimate(data0, data1);
     phase_error_estimated_d(i) = 360 * phase_error_estimated / (2 * pi);
 
-    % 
+    % time domain to frequency domain
     [freqdomain0, ~] = time_to_frequency_domain(data0, freq_samp);
     [freqdomain1, freqlist] = time_to_frequency_domain(data1, freq_samp);
 
@@ -65,27 +65,29 @@ for i = 1 : datanum
     % output propagation vedio
     if IF_Output_Vedio == true
         videofilename = strcat('.\20210411_ExperimentResult\20210411', dataname, '_PropagationVedio');
-        video = VideoWriter(videofilename, 'MPEG-4'); % 
+        video = VideoWriter(videofilename, 'MPEG-4');   % default: 'Motion JPEG AVI'
         open(video);
     end
 
-    display_length = 256;                   % 
-    x = 0 : 1/32 : display_length/32;	% time axis
-    m0 = zeros(1, display_length + 1);      % !!! must be 1-D array
+    display_length = 256;                   % length of data to display in 3-D figure
+    x = 0 : 1/32 : display_length/32;       % timeline
+    m0 = zeros(display_length + 1, 1);      % !!! must be 1-D array
     
     for t = 1 : N - display_length
-        x = x + 1/32;
-
+        % update data
         Ex = real(data0(t : t + display_length));
         Ey = real(data1(t : t + display_length));
 
-        % display
+        % updata timeline
+        x = x + 1/32;
+
+        % display 3-D figure
         figure(i * 2)
         plot3(x, m0, m0, 'black', 'LineWidth', 2)	% axis
         hold on
-        plot3(x, m0, Ex, 'green','LineWidth', 1.5)	% rx0
+        plot3(x, m0, Ex, 'green','LineWidth', 1.5)	% rx0 data
         hold on
-        plot3(x, Ey, m0, 'cyan', 'LineWidth', 1.1)	% rx1
+        plot3(x, Ey, m0, 'cyan', 'LineWidth', 1.1)	% rx1 data
         hold on
         plot3(x, Ey, Ex, 'red', 'LineWidth', 1.2)	% polaried electromagnetic wave
         hold off
@@ -99,7 +101,7 @@ for i = 1 : datanum
         zlabel('rx0')
         set(gca, 'fontsize', 12)
 
-        drawnow     % limitrate
+        drawnow     % or "drawnow limitrate" when not output vedio
 
         if IF_Output_Vedio == true
             frame = getframe(gcf);
