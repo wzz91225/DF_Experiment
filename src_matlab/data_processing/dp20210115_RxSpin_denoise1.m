@@ -1,5 +1,5 @@
-% ½«Êı¾İ×ª»»ÖÁÆµÓò£¬½«Ë«Í¨µÀÆµÓò×î´óÖµÓÃ±È·ù·¨¼ÆËã½Ç¶È
-% ÀûÓÃÔëÉùÊı¾İ£¬ÔÚÆµÓòÉÏ½«ĞÅºÅÓëÆäÏà¼õÒÔ´ïµ½È¥ÔëÄ¿µÄ
+% å°†æ•°æ®è½¬æ¢è‡³é¢‘åŸŸï¼Œå°†åŒé€šé“é¢‘åŸŸæœ€å¤§å€¼ç”¨æ¯”å¹…æ³•è®¡ç®—è§’åº¦
+% åˆ©ç”¨å™ªå£°æ•°æ®ï¼Œåœ¨é¢‘åŸŸä¸Šå°†ä¿¡å·ä¸å…¶ç›¸å‡ä»¥è¾¾åˆ°å»å™ªç›®çš„
 
 
 
@@ -7,93 +7,93 @@ fileaddr = '.\20210115_Experiment_AmCmp\rawdata\TxStay-RxSpin\';
 freq_samp = 32e3;
 angle_max = 90;
 
-% Î´È¥ÔëÊ±PearsonÏà¹ØÏµÊı0.9937
-N = 262144;	% È¥ÔëÊı¾İ½ØÈ¡³¤¶È
+% æœªå»å™ªæ—¶Pearsonç›¸å…³ç³»æ•°0.9937
+N = 262144;	% å»å™ªæ•°æ®æˆªå–é•¿åº¦
 
-% fftÇ°¼Ó´°¼õÉÙÆµÆ×Ğ¹Â¶£¬Î´¼Ó´°Ê±PearsonÏà¹ØÏµÊı0.9939
-% timewindow = taylorwin(N);	% ¼Ó´° 0.9944
-% timewindow = kaiser(N);       % ¼Ó´° 0.9944
-% timewindow = rectwin(N);      % ¼Ó´° 0.9944
-% timewindow = hamming(N);      % ¼Ó´° 0.9943
-% timewindow = gausswin(N);     % ¼Ó´° 0.9941
+% fftå‰åŠ çª—å‡å°‘é¢‘è°±æ³„éœ²ï¼ŒæœªåŠ çª—æ—¶Pearsonç›¸å…³ç³»æ•°0.9939
+% timewindow = taylorwin(N);	% åŠ çª— 0.9944
+% timewindow = kaiser(N);       % åŠ çª— 0.9944
+% timewindow = rectwin(N);      % åŠ çª— 0.9944
+% timewindow = hamming(N);      % åŠ çª— 0.9943
+% timewindow = gausswin(N);     % åŠ çª— 0.9941
 
 close all;
 
 
 
-% ´ÓÎÄ¼ş¶ÁÈ¡ÔëÉùÊı¾İ
+% ä»æ–‡ä»¶è¯»å–å™ªå£°æ•°æ®
 noise0 = read_complex_binary(strcat(fileaddr, 'n0_1'));
 noise1 = read_complex_binary(strcat(fileaddr, 'n1_1'));
 
-% È¡²¿·ÖÊ±Óòfft
+% å–éƒ¨åˆ†æ—¶åŸŸfft
 noise0_fft = fft(noise0(1 : N));
 noise1_fft = fft(noise1(1 : N));
 % noise0_fft = fft(noise0(1 : N).*timewindow);
 % noise1_fft = fft(noise1(1 : N).*timewindow);
 
-% È«²¿Ê±Óò×ªµ¥²àÆµÓò
+% å…¨éƒ¨æ—¶åŸŸè½¬å•ä¾§é¢‘åŸŸ
 [noisefreq0, nflist0] = time_to_frequency_domain(noise0, freq_samp);
 [noisefreq1, nflist1] = time_to_frequency_domain(noise1, freq_samp);
 
-% ÔëÉù»æÍ¼
+% å™ªå£°ç»˜å›¾
 % dual_channel_noise_display( noise0, noisefreq0, nflist0, ...
 %                             noise1, noisefreq1, nflist1);
 
 
                         
-% Êı¾İ´¦Àí
-dmax0 = [];         % Í¨µÀ0ÆµÓò×î´óÖµ
-dmax1 = [];         % Í¨µÀ1ÆµÓò×î´óÖµ
-freqmax0 = [];      % Í¨µÀ0ÆµÓò×î´óÖµ¶ÔÓ¦ÆµÂÊÖµ
-freqmax1 = [];      % Í¨µÀ1ÆµÓò×î´óÖµ¶ÔÓ¦ÆµÂÊÖµ
+% æ•°æ®å¤„ç†
+dmax0 = [];         % é€šé“0é¢‘åŸŸæœ€å¤§å€¼
+dmax1 = [];         % é€šé“1é¢‘åŸŸæœ€å¤§å€¼
+freqmax0 = [];      % é€šé“0é¢‘åŸŸæœ€å¤§å€¼å¯¹åº”é¢‘ç‡å€¼
+freqmax1 = [];      % é€šé“1é¢‘åŸŸæœ€å¤§å€¼å¯¹åº”é¢‘ç‡å€¼
 
-dmax0_denoise = [];     % Í¨µÀ0È¥ÔëÆµÓò×î´óÖµ
-dmax1_denoise = [];     % Í¨µÀ1È¥ÔëÆµÓò×î´óÖµ
-freqmax0_denoise = [];  % Í¨µÀ0È¥ÔëÆµÓò×î´óÖµ¶ÔÓ¦ÆµÂÊÖµ
-freqmax1_denoise = [];  % Í¨µÀ1È¥ÔëÆµÓò×î´óÖµ¶ÔÓ¦ÆµÂÊÖµ
+dmax0_denoise = [];     % é€šé“0å»å™ªé¢‘åŸŸæœ€å¤§å€¼
+dmax1_denoise = [];     % é€šé“1å»å™ªé¢‘åŸŸæœ€å¤§å€¼
+freqmax0_denoise = [];  % é€šé“0å»å™ªé¢‘åŸŸæœ€å¤§å€¼å¯¹åº”é¢‘ç‡å€¼
+freqmax1_denoise = [];  % é€šé“1å»å™ªé¢‘åŸŸæœ€å¤§å€¼å¯¹åº”é¢‘ç‡å€¼
 
 for angle_actual = 0 : 15 : angle_max
     filename0 = strcat('d0_', num2str(angle_actual), 'deg');
     filename1 = strcat('d1_', num2str(angle_actual), 'deg');
     
-    % ´ÓÎÄ¼ş¶ÁÈ¡¶ÔÓ¦½Ç¶ÈÊı¾İ
+    % ä»æ–‡ä»¶è¯»å–å¯¹åº”è§’åº¦æ•°æ®
     data0 = read_complex_binary(strcat(fileaddr, filename0));
     data1 = read_complex_binary(strcat(fileaddr, filename1));
     
-    % Ê±Óò×ªµ¥²àÆµÓò
+    % æ—¶åŸŸè½¬å•ä¾§é¢‘åŸŸ
     [datafreq0, freqlist0] = time_to_frequency_domain(data0, freq_samp);
     [datafreq1, freqlist1] = time_to_frequency_domain(data1, freq_samp);
     
-    % »ñÈ¡ÆµÓò×î´óÖµ¼°Æä¶ÔÓ¦Æµµã
+    % è·å–é¢‘åŸŸæœ€å¤§å€¼åŠå…¶å¯¹åº”é¢‘ç‚¹
     [dmax0(end+1), freqmax0(end+1)] = max(datafreq0);
     freqmax0(end) = freq_samp * freqmax0(end) / length(data0);
     [dmax1(end+1), freqmax1(end+1)] = max(datafreq1);
     freqmax1(end) = freq_samp * freqmax1(end) / length(data1);
     
-    % Ë«Í¨µÀĞÅºÅ»æÍ¼
+    % åŒé€šé“ä¿¡å·ç»˜å›¾
     dual_channel_signal_display(strcat(num2str(angle_actual), 'deg'), ...
                                 data0, datafreq0, freqlist0, ...
                                 data1, datafreq1, freqlist1);
     
     
                             
-    % ÆµÓòÈ¥Ôë
+    % é¢‘åŸŸå»å™ª
     data0_denoise = ifft(fft(data0(1 : N)) - noise0_fft);
     data1_denoise = ifft(fft(data1(1 : N)) - noise1_fft);
 %     data0_denoise = ifft(fft(data0(1 : N).*timewindow') - noise0_fft);
 %     data1_denoise = ifft(fft(data1(1 : N).*timewindow') - noise1_fft);
     
-    % Ê±Óò×ªµ¥²àÆµÓò
+    % æ—¶åŸŸè½¬å•ä¾§é¢‘åŸŸ
     [datafreq0_denoise, freqlist0_denoise] = time_to_frequency_domain(data0_denoise, freq_samp);
     [datafreq1_denoise, freqlist1_denoise] = time_to_frequency_domain(data1_denoise, freq_samp);
     
-    % »ñÈ¡ÆµÓò×î´óÖµ¼°Æä¶ÔÓ¦Æµµã
+    % è·å–é¢‘åŸŸæœ€å¤§å€¼åŠå…¶å¯¹åº”é¢‘ç‚¹
     [dmax0_denoise(end+1), freqmax0_denoise(end+1)] = max(datafreq0_denoise);
     freqmax0_denoise(end) = freq_samp * freqmax0_denoise(end) / N;
     [dmax1_denoise(end+1), freqmax1_denoise(end+1)] = max(datafreq1_denoise);
     freqmax1_denoise(end) = freq_samp * freqmax1_denoise(end) / N;
 
-    % Ë«Í¨µÀĞÅºÅ»æÍ¼
+    % åŒé€šé“ä¿¡å·ç»˜å›¾
 %     dual_channel_signal_display(strcat('Denoise ', num2str(angle_actual), 'deg'), ...
 %                                 data0_denoise, datafreq0_denoise, freqlist0_denoise, ...
 %                                 data1_denoise, datafreq1_denoise, freqlist1_denoise);
@@ -102,13 +102,13 @@ end
 
 
 
-% ±È·ù·¨¼ÆËã½Ç¶È
+% æ¯”å¹…æ³•è®¡ç®—è§’åº¦
 angle_calc = [];
 for i = 1 : angle_max / 15 + 1
     angle_calc(i) = atand(dmax1(i) / dmax0(i));
 end
 
-% ±È·ù·¨¼ÆËãÈ¥Ôë½Ç¶È
+% æ¯”å¹…æ³•è®¡ç®—å»å™ªè§’åº¦
 angle_calc_denoise = [];
 for i = 1 : angle_max / 15 + 1
     angle_calc_denoise(i) = atand(dmax1_denoise(i) / dmax0_denoise(i));
@@ -116,7 +116,7 @@ end
 
 
 
-% »æÖÆÈ¥Ôë²âÏò½á¹û
+% ç»˜åˆ¶å»å™ªæµ‹å‘ç»“æœ
 figure('name', 'Angle')
 anglelist = (0:15:angle_max);
 

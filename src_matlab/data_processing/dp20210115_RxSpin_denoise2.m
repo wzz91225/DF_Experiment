@@ -6,7 +6,7 @@ fileaddr = '.\20210115_Experiment_AmCmp\rawdata\TxStay-RxSpin\';
 freq_samp = 32e3;
 angle_max = 90;
 
-% N / AccumulationLength ĞèÎªÕûÊı
+% N / AccumulationLength éœ€ä¸ºæ•´æ•°
 N = 262144;
 AccumulationLength = 32768;
 
@@ -21,20 +21,20 @@ phase_difference = zeros(angle_max / 15 + 1, 1);
 
 for i = 1 : angle_max / 15 + 1
     actual_angle = (i - 1) * 15;
-    % ´ÓÎÄ¼ş¶ÁÈ¡¶ÔÓ¦½Ç¶ÈÊı¾İ
+    % ä»æ–‡ä»¶è¯»å–å¯¹åº”è§’åº¦æ•°æ®
     filename0 = strcat('d0_', num2str(actual_angle), 'deg');
     filename1 = strcat('d1_', num2str(actual_angle), 'deg');
     data0 = read_complex_binary(strcat(fileaddr, filename0));
     data1 = read_complex_binary(strcat(fileaddr, filename1));
     
-    % ¸ù¾İÉè¶¨³¤¶È½ØÈ¡Êı¾İ
+    % æ ¹æ®è®¾å®šé•¿åº¦æˆªå–æ•°æ®
     data0 = data0(1 : N);
     data1 = data1(1 : N);
     
-    % ²âÁ¿ÏàÎ»²î
+    % æµ‹é‡ç›¸ä½å·®
     phase_difference(i) = phase_difference_estimate(data0, data1);
     
-%     % ÒÆ¶¯Æ½¾ùÂË²¨
+%     % ç§»åŠ¨å¹³å‡æ»¤æ³¢
 %     by = [1 1 1 1 1 1]/6;
 %     X_r0 = filter(by, 1, real(data0));
 %     X_r1 = filter(by, 1, real(data1));
@@ -44,7 +44,7 @@ for i = 1 : angle_max / 15 + 1
 %     data0 = X_r0 + 1i * X_i0;
 %     data1 = X_r1 + 1i * X_i1;
 
-    % ·ÇÏà¸É»ıÀÛ Incoherent Accumulation
+    % éç›¸å¹²ç§¯ç´¯ Incoherent Accumulation
     freqlist = zeros(int32(AccumulationLength/2)+1, 1);
     incoherentAcc0 = zeros(int32(AccumulationLength/2)+1, 1);
     incoherentAcc1 = zeros(int32(AccumulationLength/2)+1, 1);
@@ -52,11 +52,11 @@ for i = 1 : angle_max / 15 + 1
         pBegin = j * AccumulationLength + 1;
         pEnd = (j + 1) * AccumulationLength;
 
-        % Í¨µÀ0
+        % é€šé“0
         [freqdomain0, ~] = time_to_frequency_domain(data0(pBegin : pEnd), freq_samp);
         incoherentAcc0 = incoherentAcc0 + freqdomain0;
 
-        % Í¨µÀ1
+        % é€šé“1
         [freqdomain1, freqlist] = time_to_frequency_domain(data1(pBegin : pEnd), freq_samp);
         incoherentAcc1 = incoherentAcc1 + freqdomain1;
     end
@@ -70,7 +70,7 @@ for i = 1 : angle_max / 15 + 1
                                 data0, incoherentAcc0, freqlist, ...
                                 data1, incoherentAcc1, freqlist);
     
-    % »ñÈ¡ÆµÓò×î´óÖµ¼°Æä¶ÔÓ¦Æµµã
+    % è·å–é¢‘åŸŸæœ€å¤§å€¼åŠå…¶å¯¹åº”é¢‘ç‚¹
     [dmax0(i), freqmax0(i)] = max(incoherentAcc0);
     freqmax0(end) = freq_samp * freqmax0(end) / AccumulationLength;
     [dmax1(i), freqmax1(i)] = max(incoherentAcc1);
@@ -79,7 +79,7 @@ end
 
 
 
-% ±È·ù·¨¼ÆËã½Ç¶È
+% æ¯”å¹…æ³•è®¡ç®—è§’åº¦
 angle_calc = zeros(1, angle_max / 15 + 1);
 for i = 1 : angle_max / 15 + 1
     angle_calc(i) = atand(dmax1(i) / dmax0(i));
@@ -87,7 +87,7 @@ end
 
 
 
-% »æÖÆÈ¥Ôë²âÏò½á¹û
+% ç»˜åˆ¶å»å™ªæµ‹å‘ç»“æœ
 figure('name', 'Angle')
 
 anglelist = (0:15:angle_max);
@@ -100,6 +100,6 @@ xlim([0 90])
 err_ave = mean(err_list)
 rho = corrcoef(anglelist, angle_calc)
 
-xlabel('Êµ¼Ê½Ç¶È(¡ã)')
-ylabel('²âÁ¿½Ç¶È(¡ã)')
-title('»ùÓÚ±È·ù·¨µÄÆµÓò²âÏò½á¹û')
+xlabel('å®é™…è§’åº¦(Â°)')
+ylabel('æµ‹é‡è§’åº¦(Â°)')
+title('åŸºäºæ¯”å¹…æ³•çš„é¢‘åŸŸæµ‹å‘ç»“æœ')

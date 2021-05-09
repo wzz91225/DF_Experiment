@@ -1,7 +1,7 @@
 function [] = dual_channel_noise_display( ...
                                 data0_time, data0_freq, freqlist0, ...
                                 data1_time, data1_freq, freqlist1)
-% DUAL_CHANNEL_NOISE_DISPLAY Ë«Í¨µÀĞÅºÅÊ±ÓòÓëÆµÓò»æÍ¼
+% DUAL_CHANNEL_NOISE_DISPLAY åŒé€šé“ä¿¡å·æ—¶åŸŸä¸é¢‘åŸŸç»˜å›¾
 
 d0_real = real(data0_time);
 d0_imag = imag(data0_time);
