@@ -12,7 +12,7 @@ OutputFileName_PR = strcat(OutputFileAddress, '1');
 samp_rate = 32e3;
 
 % polarization parameters
-r = 1.00;                       % AR
+r = 2.00;                       % AR
 rotation = +1;                  % LeftHand:+1 / RightHand:-1
 delta_phi = 1/4 * pi;           % phase error [0, 2*pi)
 
@@ -86,11 +86,11 @@ for t = 1 : data_length - display_length
     figure(2)
     plot3(tl, a0, a0, '--black', 'LineWidth', 2.0)	% axis
     hold on
-    plot3(tl, a0, Ex, 'green','LineWidth', 1.0)     % Ex
+    plot3(tl, Ex, a0, 'green','LineWidth', 1.0)     % Ex
     hold on
-    plot3(tl, Ey, a0, 'blue', 'LineWidth', 1.0)     % Ey
+    plot3(tl, a0, Ey, 'blue', 'LineWidth', 1.0)     % Ey
     hold on
-    plot3(tl, Ey, Ex, 'red', 'LineWidth', 2.0)      % electromagnetic wave
+    plot3(tl, Ex, Ey, 'red', 'LineWidth', 2.0)      % electromagnetic wave
     hold off
     
     title('Polarized Electromagnetic Wave Propagation', 'fontsize',14)
