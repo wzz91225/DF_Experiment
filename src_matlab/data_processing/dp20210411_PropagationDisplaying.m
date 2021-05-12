@@ -83,13 +83,13 @@ for i = 1 : datanum
 
         % display 3-D figure
         figure(i * 2)
-        plot3(x, m0, m0, 'black', 'LineWidth', 2)	% axis
+        plot3(x, m0, m0, '--black', 'LineWidth', 2.0)   % axis
         hold on
-        plot3(x, m0, Ex, 'green','LineWidth', 1.5)	% rx0 data
+        plot3(x, m0, Ex, 'green','LineWidth', 1.0)      % rx0 data
         hold on
-        plot3(x, Ey, m0, 'cyan', 'LineWidth', 1.1)	% rx1 data
+        plot3(x, Ey, m0, 'cyan', 'LineWidth', 1.0)      % rx1 data
         hold on
-        plot3(x, Ey, Ex, 'red', 'LineWidth', 1.2)	% polaried electromagnetic wave
+        plot3(x, Ey, Ex, 'red', 'LineWidth', 2.0)       % polaried electromagnetic wave
         hold off
 
         title(dataname, 'fontsize',14)
@@ -100,6 +100,8 @@ for i = 1 : datanum
         ylabel('rx1')
         zlabel('rx0')
         set(gca, 'fontsize', 12)
+        set(gca,'YDir','reverse')   % Y-axis reverse
+        grid;
 
         drawnow     % or "drawnow limitrate" when not output vedio
 
