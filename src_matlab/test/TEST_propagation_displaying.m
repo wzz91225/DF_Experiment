@@ -4,8 +4,8 @@ close all;
 
 % ************************ BEGIN: parameters ************************
 
-% output vedio
-IF_Output_Vedio = false;
+% output picture and vedio
+IF_Output_Files = true;
 OutputFileAddress = '.\OutputFile_PolarizedEMW\';
 OutputFileName_PR = strcat(OutputFileAddress, '1');
 
@@ -50,7 +50,11 @@ axis([-1 1 -1 1])
 xlabel('X-axis')
 ylabel('Y-axis')
 grid;
-exportgraphics(gcf, strcat(OutputFileName_PR, '.png'));	% , 'Resolution', 300
+
+% output picture
+if IF_Output_Files == true
+    exportgraphics(gcf, strcat(OutputFileName_PR, '.png'));	% , 'Resolution', 300
+end
 % ************************ END: display 2-D figure ************************
 
 
@@ -61,7 +65,7 @@ tl = 0 : 1e3/samp_rate : 1e3*display_length/samp_rate;
 a0 = zeros(display_length + 1, 1);
 
 % output propagation vedio
-if IF_Output_Vedio == true
+if IF_Output_Files == true
     videofilename = strcat(OutputFileName_PR);
     video = VideoWriter(videofilename, 'MPEG-4');   % default: 'Motion JPEG AVI'
     open(video);
@@ -98,21 +102,21 @@ for t = 1 : data_length - display_length
     set(gca, 'fontsize', 12)
     set(gca,'YDir','reverse')   % Y-axis reverse
     grid;
-
     
-    if IF_Output_Vedio == true
+    if IF_Output_Files == true
         drawnow
     else
         drawnow limitrate
     end
     
-    if IF_Output_Vedio == true
+    
+    if IF_Output_Files == true
         frame = getframe(gcf);
         writeVideo(video, frame);
     end
 end
 
-if IF_Output_Vedio == true
+if IF_Output_Files == true
     close(video);
 end
 % ************************ END: display 3-D figure ************************
