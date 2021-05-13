@@ -5,35 +5,42 @@ close all;
 % ************************ BEGIN: parameters ************************
 
 % output picture and vedio
-IF_Output_Files = true;
+IF_Output_Files = false;
 OutputFileAddress = '.\OutputFile_PolarizedEMW\';
 OutputFileName_PR = strcat(OutputFileAddress, '1');
 
-samp_rate = 32e3;
+% EMW frequency
+freq = 1e4;
+
+% sampling rate
+samp_rate = 64 * freq;
+% samp_rate = 32e3;
 
 % polarization parameters
-r = 2.00;                       % AR
+r = 1.00;                       % AR
 rotation = +1;                  % LeftHand:+1 / RightHand:-1
-delta_phi = 1/4 * pi;           % phase error [0, 2*pi)
+delta_phi = 4/4 * pi;           % phase error [0, 2*pi)
 
-omega = 1e3;                    % angular frequency
-Em = 1 * 0.80;                  % amplitude
+Em = 1 * 1.00;                  % amplitude
 Exm = Em * r / (r^2 + 1)^0.5;   % X-axis amplitude
 Eym = Em / (r^2 + 1)^0.5;       % Y-axis amplitude
 
-data_length = 512;
-display_length = 256;
+display_length = 4 * samp_rate / freq;     % 4 cycles
+data_length = 1 * display_length;
+
+axis_maxmin = max(Exm, Eym);
+% axis_maxmin = 1.0;
 % ************************ END: parameters ************************
 
 
 
 % ************************ BEGIN: display 2-D figure ************************
 % timeline
-tl = 0 : 1/samp_rate : samp_rate/omega;
+tl = 0 : 1/samp_rate : 1/freq;
 % !!! must be 1-D array
-a0 = zeros(samp_rate^2/omega + 1, 1);
-Ex = Exm * cos(omega * tl);
-Ey = Eym * cos(omega * tl + rotation * delta_phi);
+a0 = zeros(size(tl));
+Ex = Exm * cos(2 * pi * freq * tl);
+Ey = Eym * cos(2 * pi * freq * tl + rotation * delta_phi);
 
 % draw 2-D figure
 figure(1)
@@ -46,7 +53,7 @@ plot(Ex, Ey, 'red', 'LineWidth', 3)
 hold off
 title('Electromagnetic Wave Polarization', 'fontsize', 14)
 axis equal
-axis([-1 1 -1 1])
+axis([-axis_maxmin axis_maxmin -axis_maxmin axis_maxmin])
 xlabel('X-axis')
 ylabel('Y-axis')
 grid;
@@ -60,9 +67,9 @@ end
 
 % ************************ BEGIN: display 3-D figure ************************
 % timeline / Z-axis
-tl = 0 : 1e3/samp_rate : 1e3*display_length/samp_rate;
+tl = 0 : 1/samp_rate : display_length/samp_rate;
 % !!! must be 1-D array
-a0 = zeros(display_length + 1, 1);
+a0 = zeros(size(tl));
 
 % output propagation vedio
 if IF_Output_Files == true
@@ -73,18 +80,18 @@ end
 
 figure(2)
 set(gcf,'position',[600, 100, 500, 500]);
-for t = 1 : data_length - display_length
+for t = 0 : data_length - display_length
     % update data
-    Ex = Exm * cos(omega * tl);
-    Ey = Eym * cos(omega * tl + rotation * delta_phi);
+    Ex = Exm * cos(2 * pi * freq * tl);
+    Ey = Eym * cos(2 * pi * freq * tl + rotation * delta_phi);
 
     % updata timeline
-    tl = tl + 1e3/samp_rate;
+    tl = tl + 1/samp_rate;
 
     
     % draw 3-D figure
     figure(2)
-    plot3(tl, a0, a0, '--black', 'LineWidth', 2.0)	% axis
+    plot3(tl, a0, a0, ':black', 'LineWidth', 2.0)	% axis
     hold on
     plot3(tl, Ex, a0, 'green','LineWidth', 1.0)     % Ex
     hold on
@@ -95,8 +102,9 @@ for t = 1 : data_length - display_length
     
     title('Polarized Electromagnetic Wave Propagation', 'fontsize',14)
 %     axis equal
-    axis([tl(1) tl(display_length + 1) -1 1 -1 1])
-    xlabel('Time(ms)')
+    axis([tl(1) tl(end) ...
+        -axis_maxmin axis_maxmin -axis_maxmin axis_maxmin])
+    xlabel('Time(s)')
     ylabel('X-axis')
     zlabel('Y-axis')
     set(gca, 'fontsize', 12)
