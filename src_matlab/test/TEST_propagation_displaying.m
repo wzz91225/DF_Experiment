@@ -5,9 +5,10 @@ close all;
 % ************************ BEGIN: parameters ************************
 
 % output picture and vedio
-IF_Output_Files = false;
+IF_Output_Pictures = true;
+IF_Output_Video = true;
 OutputFileAddress = '.\OutputFile_PolarizedEMW\';
-OutputFileName_PR = strcat(OutputFileAddress, '1');
+OutputFileName_PR = strcat(OutputFileAddress, '2');
 
 % EMW frequency
 freq = 1e4;
@@ -19,14 +20,18 @@ samp_rate = 64 * freq;
 % polarization parameters
 r = 1.00;                       % AR
 rotation = +1;                  % LeftHand:+1 / RightHand:-1
-delta_phi = 4/4 * pi;           % phase error [0, 2*pi)
+delta_phi = 2/4 * pi;           % phase error [0, 2*pi)
 
 Em = 1 * 1.00;                  % amplitude
 Exm = Em * r / (r^2 + 1)^0.5;   % X-axis amplitude
 Eym = Em / (r^2 + 1)^0.5;       % Y-axis amplitude
 
 display_length = 4 * samp_rate / freq;     % 4 cycles
-data_length = 1 * display_length;
+if IF_Output_Video == true
+    data_length = 2 * display_length;
+else
+    data_length = 1 * display_length;
+end
 
 axis_maxmin = max(Exm, Eym);
 % axis_maxmin = 1.0;
@@ -59,8 +64,8 @@ ylabel('Y-axis')
 grid;
 
 % output picture
-if IF_Output_Files == true
-    exportgraphics(gcf, strcat(OutputFileName_PR, '.png'));	% , 'Resolution', 300
+if IF_Output_Pictures == true
+    exportgraphics(gcf, strcat(OutputFileName_PR, '_2D.png'));	% , 'Resolution', 300
 end
 % ************************ END: display 2-D figure ************************
 
@@ -72,7 +77,7 @@ tl = 0 : 1/samp_rate : display_length/samp_rate;
 a0 = zeros(size(tl));
 
 % output propagation vedio
-if IF_Output_Files == true
+if IF_Output_Video == true
     videofilename = strcat(OutputFileName_PR);
     video = VideoWriter(videofilename, 'MPEG-4');   % default: 'Motion JPEG AVI'
     open(video);
@@ -111,20 +116,25 @@ for t = 0 : data_length - display_length
     set(gca,'YDir','reverse')   % Y-axis reverse
     grid;
     
-    if IF_Output_Files == true
+    if IF_Output_Video == true
         drawnow
     else
         drawnow limitrate
     end
+
     
+    % output picture
+    if IF_Output_Pictures == true
+        exportgraphics(gcf, strcat(OutputFileName_PR, '_3D.png'));	% , 'Resolution', 300
+    end
     
-    if IF_Output_Files == true
+    if IF_Output_Video == true
         frame = getframe(gcf);
         writeVideo(video, frame);
     end
 end
 
-if IF_Output_Files == true
+if IF_Output_Video == true
     close(video);
 end
 % ************************ END: display 3-D figure ************************
