@@ -4,7 +4,7 @@ close all;
 
 % ************************ BEGIN: parameters ************************
 
-% output picture and vedio
+% output picture and video
 IF_Output_Pictures = true;
 IF_Output_Video = true;
 OutputFileAddress = '.\OutputFile_PolarizedEMW\';
@@ -15,26 +15,28 @@ freq = 1e4;
 
 % sampling rate
 samp_rate = 64 * freq;
-% samp_rate = 32e3;
 
 % polarization parameters
 r = 1.00;                       % AR
 rotation = +1;                  % LeftHand:+1 / RightHand:-1
-delta_phi = 2/4 * pi;           % phase error [0, 2*pi)
+delta_phi = 3/4 * pi;           % phase error [0, 2*pi)
 
 Em = 1 * 1.00;                  % amplitude
 Exm = Em * r / (r^2 + 1)^0.5;   % X-axis amplitude
 Eym = Em / (r^2 + 1)^0.5;       % Y-axis amplitude
 
-display_length = 4 * samp_rate / freq;     % 4 cycles
+% display 4 cycles in figure
+display_length = 4 * samp_rate / freq;
+
+% only display dynamic figure when output video
 if IF_Output_Video == true
     data_length = 2 * display_length;
 else
     data_length = 1 * display_length;
 end
 
+% axis range [-axis_maxmin, +axis_maxmin]
 axis_maxmin = max(Exm, Eym);
-% axis_maxmin = 1.0;
 % ************************ END: parameters ************************
 
 
@@ -63,7 +65,7 @@ xlabel('Ex')
 ylabel('Ey')
 grid;
 
-% output picture
+% output 2-D picture
 if IF_Output_Pictures == true
     exportgraphics(gcf, strcat(OutputFileName_PR, '_2D.png'));	% , 'Resolution', 300
 end
@@ -76,7 +78,7 @@ tl = 0 : 1/samp_rate : display_length/samp_rate;
 % !!! must be 1-D array
 a0 = zeros(size(tl));
 
-% output propagation vedio
+% output propagation video
 if IF_Output_Video == true
     videofilename = strcat(OutputFileName_PR);
     video = VideoWriter(videofilename, 'MPEG-4');   % default: 'Motion JPEG AVI'
@@ -102,7 +104,7 @@ for t = 0 : data_length - display_length
     hold on
     plot3(tl, a0, Ey, 'blue', 'LineWidth', 1.0)     % Ey
     hold on
-    plot3(tl, Ex, Ey, 'red', 'LineWidth', 2.0)      % electromagnetic wave
+    plot3(tl, Ex, Ey, 'red', 'LineWidth', 2.0)      % electromagnetic wave(EMW)
     hold off
     
     title('Polarized Electromagnetic Wave Propagation', 'fontsize',14)
@@ -116,6 +118,7 @@ for t = 0 : data_length - display_length
     set(gca,'YDir','reverse')   % Y-axis reverse
     grid;
     
+    % make display smoothly when not output video 
     if IF_Output_Video == true
         drawnow
     else
@@ -123,17 +126,19 @@ for t = 0 : data_length - display_length
     end
 
     
-    % output picture
+    % output 3-D picture
     if IF_Output_Pictures == true && t == 0
         exportgraphics(gcf, strcat(OutputFileName_PR, '_3D.png'));	% , 'Resolution', 300
     end
     
+    % output video
     if IF_Output_Video == true
         frame = getframe(gcf);
         writeVideo(video, frame);
     end
 end
 
+% finish video output
 if IF_Output_Video == true
     close(video);
 end
