@@ -8,7 +8,7 @@ close all;
 IF_Output_Pictures = true;
 IF_Output_Video = true;
 OutputFileAddress = '.\OutputFile_PolarizedEMW\';
-OutputFileName_PR = strcat(OutputFileAddress, '2');
+OutputFileName_PR = strcat(OutputFileAddress, 'tmp');
 
 % EMW frequency
 freq = 1e4;
@@ -59,8 +59,8 @@ hold off
 title('Electromagnetic Wave Polarization', 'fontsize', 14)
 axis equal
 axis([-axis_maxmin axis_maxmin -axis_maxmin axis_maxmin])
-xlabel('X-axis')
-ylabel('Y-axis')
+xlabel('Ex')
+ylabel('Ey')
 grid;
 
 % output picture
@@ -110,8 +110,8 @@ for t = 0 : data_length - display_length
     axis([tl(1) tl(end) ...
         -axis_maxmin axis_maxmin -axis_maxmin axis_maxmin])
     xlabel('Time(s)')
-    ylabel('X-axis')
-    zlabel('Y-axis')
+    ylabel('Ex')
+    zlabel('Ey')
     set(gca, 'fontsize', 12)
     set(gca,'YDir','reverse')   % Y-axis reverse
     grid;
@@ -124,7 +124,7 @@ for t = 0 : data_length - display_length
 
     
     % output picture
-    if IF_Output_Pictures == true
+    if IF_Output_Pictures == true && t == 0
         exportgraphics(gcf, strcat(OutputFileName_PR, '_3D.png'));	% , 'Resolution', 300
     end
     
