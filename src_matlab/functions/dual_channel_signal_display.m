@@ -28,15 +28,15 @@ axis([1 100 -1 1])
 
 subplot(223)
 plot(freqlist0, data0_freq)
-% xlim([1.20e3 1.35e3])
-% ylim([0 1.5])
-axis([1.20e3 1.35e3 0 1.5])
+xlim([1.20e3 1.35e3])
+ylim([0 10])
+% axis([1.20e3 1.35e3 0 1.5])
 
 subplot(224)
 plot(freqlist1, data1_freq)
-% xlim([1.20e3 1.35e3])
-% ylim([0 1.5])
-axis([1.20e3 1.35e3 0 1.5])
+xlim([1.20e3 1.35e3])
+ylim([0 10])
+% axis([1.20e3 1.35e3 0 1.5])
 
 end
 

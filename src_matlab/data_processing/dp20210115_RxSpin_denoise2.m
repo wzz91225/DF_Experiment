@@ -19,6 +19,7 @@ freqmax1 = zeros(angle_max / 15 + 1, 1);
 
 phase_difference = zeros(angle_max / 15 + 1, 1);
 
+
 for i = 1 : angle_max / 15 + 1
     actual_angle = (i - 1) * 15;
     % 从文件读取对应角度数据
@@ -30,6 +31,25 @@ for i = 1 : angle_max / 15 + 1
     % 根据设定长度截取数据
     data0 = data0(1 : N);
     data1 = data1(1 : N);
+
+    
+    figure(1)
+    set(gcf,'position',[100, 100, 700, 1000]);
+    subplot(7, 2, i*2-1)
+    plot(real(data0))
+    hold on
+    plot(imag(data0))
+    hold on
+    axis([1 256 -1 1])
+    title(strcat(num2str(actual_angle), '° X轴天线'))
+    subplot(7, 2, i*2)
+    plot(real(data1))
+    hold on
+    plot(imag(data1))
+    hold on
+    axis([1 256 -1 1])
+    title(strcat(num2str(actual_angle), '° Y轴天线'))
+    
     
     % 测量相位差
     phase_difference(i) = phase_difference_estimate(data0, data1);
@@ -88,18 +108,21 @@ end
 
 
 % 绘制去噪测向结果
-figure('name', 'Angle')
+figure('name', '基于比幅法的频域测向结果')
 
 anglelist = (0:15:angle_max);
-% plot(anglelist, angle_calc, 'o')
+plot(anglelist, angle_calc, 'xblack')
+hold on
+plot(anglelist, anglelist, '--black')
+hold off
 
 err_list = abs(angle_calc - anglelist);
-errorbar(anglelist, angle_calc, err_list, 'o')
-xlim([0 90])
+% errorbar(anglelist, angle_calc, err_list, 'x')
+% xlim([0 90])
 
 err_ave = mean(err_list)
 rho = corrcoef(anglelist, angle_calc)
 
 xlabel('实际角度(°)')
 ylabel('测量角度(°)')
-title('基于比幅法的频域测向结果')
+% title('基于比幅法的频域测向结果')
