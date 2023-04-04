@@ -5,13 +5,13 @@ function [sense_of_rotation, tile_angle, axial_ratio, phase_difference] ...
 %   calculate phase difference between data0 and data1
 
 
-% estimate phase difference
-% phase_difference = phase_difference_estimate(data0, data1);
+% 估计相位差（相关法）
 data_corr = xcorr(data0, data1);
 data_corr_abs = abs(data_corr);
 corr_max = data_corr(data_corr_abs == max(data_corr_abs));
 phase_difference = angle(corr_max / abs(corr_max));
 
+% 判断极化电磁波旋向
 if (0 < phase_difference) && (phase_difference < pi)
     sense_of_rotation = +1;
 elseif ((-pi < phase_difference) && (phase_difference < 0))
@@ -20,33 +20,37 @@ else
     sense_of_rotation = 0;
 end
 
-% get peak-peak
-data0_pp = max(real(data0)) - min(real(data0));
-data1_pp = max(real(data1)) - min(real(data1));
+% 计算双通道幅值
+data0_am = max(real(data0)) - min(real(data0)) / 2;
+data1_am = max(real(data1)) - min(real(data1)) / 2;
 
-% calculate tile angle (tau)
+% 计算极化倾角
 tile_angle = 0.5 * atan( ...
-	(2 * data0_pp * data1_pp * cos(phase_difference)) ...
-	/ (data0_pp^2 - data1_pp^2) ...
+	(2 * data0_am * data1_am * cos(phase_difference)) ...
+	/ (data0_am^2 - data1_am^2) ...
     );
 
-% calculate axial ratio (AR)
-sin(tile_angle)
-cos(tile_angle)
-sin(2 * tile_angle)
-cos(phase_difference)
-b = data0_pp^2 * cos(tile_angle)^2 ...
-    + data0_pp * data1_pp * sin(2 * tile_angle) * cos(phase_difference) ...
-    + data1_pp^2 * sin(tile_angle)^2;
-a = data0_pp^2 * sin(tile_angle)^2 ...
-    - data0_pp * data1_pp * sin(2 * tile_angle) * cos(phase_difference) ...
-    + data1_pp^2 * cos(tile_angle)^2;
-if a>b
-    axial_ratio = sqrt(a / b);
-else
-    axial_ratio = sqrt(b / a);
+% 计算长短轴
+a = data0_am^2 * cos(tile_angle)^2 ...
+    + data0_am * data1_am * sin(2 * tile_angle) * cos(phase_difference) ...
+    + data1_am^2 * sin(tile_angle)^2;
+b = data0_am^2 * sin(tile_angle)^2 ...
+    - data0_am * data1_am * sin(2 * tile_angle) * cos(phase_difference) ...
+    + data1_am^2 * cos(tile_angle)^2;
+if a < b
+    c = a;
+    a = b;
+    b = c;
+    % 改变倾角取值范围
+    if tile_angle > 0
+        tile_angle = tile_angle - pi/2;
+    else
+        tile_angle = tile_angle + pi/2;
+    end
 end
 
+% 计算极化轴比
+axial_ratio = sqrt(a / b);
 
 end
 
