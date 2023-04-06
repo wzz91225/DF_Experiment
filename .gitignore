@@ -1,5 +1,6 @@
 *
 !.gitignore
+!LICENSE
 !/src_matlab/
 !/src_matlab/*
 !/src_matlab/*/*.m
